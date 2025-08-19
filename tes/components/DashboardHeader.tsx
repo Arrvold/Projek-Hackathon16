@@ -1,14 +1,15 @@
 'use client'
 
+import { useEffect, useRef, useState } from 'react'
+
 interface DashboardHeaderProps {
   username: string
   stamina: number
   coins: number
   userRole: string
-  onRoleChange: () => void
 }
 
-export default function DashboardHeader({ username, stamina, coins, userRole, onRoleChange }: DashboardHeaderProps) {
+export default function DashboardHeader({ username, stamina, coins, userRole }: DashboardHeaderProps) {
   const getRoleName = (roleId: string) => {
     const roleNames: { [key: string]: string } = {
       'codes': 'Codes',
@@ -18,6 +19,33 @@ export default function DashboardHeader({ username, stamina, coins, userRole, on
       'literature': 'Literature'
     }
     return roleNames[roleId] || roleId
+  }
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false)
+      }
+    }
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isMenuOpen])
+
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem('username')
+      localStorage.removeItem('userRole')
+    } catch (e) {
+      // noop
+    }
+    window.location.href = '/'
   }
 
   return (
@@ -31,8 +59,8 @@ export default function DashboardHeader({ username, stamina, coins, userRole, on
             </h1>
           </div>
           
-          {/* Stamina, Coins, dan Ganti Role - Sebelah Kanan */}
-          <div className="flex items-center space-x-6">
+          {/* Stamina, Coins, dan Menu - Sebelah Kanan */}
+          <div className="flex items-center space-x-6" ref={menuRef}>
             {/* Stamina */}
             <div className="flex items-center space-x-2">
               <img 
@@ -57,13 +85,54 @@ export default function DashboardHeader({ username, stamina, coins, userRole, on
               </span>
             </div>
             
-            {/* Tombol Ganti Role */}
-            <button 
-              onClick={onRoleChange}
-              className="bg-orange-500 hover:bg-orange-600 text-white font-medium px-4 py-2 rounded-lg transition-colors font-minecraft"
-            >
-              Ganti Role
-            </button>
+            {/* Tombol Menu */}
+            <div className="relative">
+              <button 
+                onClick={() => setIsMenuOpen((prev) => !prev)}
+                className="bg-orange-500 hover:bg-orange-600 text-white font-medium px-4 py-2 rounded-lg transition-colors font-minecraft"
+                aria-haspopup="true"
+                aria-expanded={isMenuOpen}
+              >
+                Menu
+              </button>
+
+              {isMenuOpen && (
+                <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-2xl shadow-2xl z-50 p-4">
+                  <div className="grid grid-cols-3 gap-4">
+                    {/* Shop */}
+                    <button className="flex flex-col items-center justify-center gap-2 hover:bg-gray-50 rounded-xl p-3 transition font-minecraft" onClick={() => setIsMenuOpen(false)}>
+                      <img src="/assets/menu_shop.png" alt="Shop" className="w-8 h-8" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/assets/button.png' }} />
+                      <span className="text-xs text-gray-800">Shop</span>
+                    </button>
+                    {/* Inventory */}
+                    <button className="flex flex-col items-center justify-center gap-2 hover:bg-gray-50 rounded-xl p-3 transition font-minecraft" onClick={() => setIsMenuOpen(false)}>
+                      <img src="/assets/menu_inventory.png" alt="Inventory" className="w-8 h-8" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/assets/button.png' }} />
+                      <span className="text-xs text-gray-800">Inventory</span>
+                    </button>
+                    {/* Leaderboard */}
+                    <button className="flex flex-col items-center justify-center gap-2 hover:bg-gray-50 rounded-xl p-3 transition font-minecraft" onClick={() => setIsMenuOpen(false)}>
+                      <img src="/assets/menu_leaderboard.png" alt="Leaderboard" className="w-8 h-8" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/assets/button.png' }} />
+                      <span className="text-xs text-gray-800">Leaderboard</span>
+                    </button>
+                    {/* Games */}
+                    <button className="flex flex-col items-center justify-center gap-2 hover:bg-gray-50 rounded-xl p-3 transition font-minecraft" onClick={() => setIsMenuOpen(false)}>
+                      <img src="/assets/gacha_woilah.png" alt="Gacha" className="w-8 h-8" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/assets/button.png' }} />
+                      <span className="text-xs text-gray-800">Gacha</span>
+                    </button>
+                    {/* Setting */}
+                    <button className="flex flex-col items-center justify-center gap-2 hover:bg-gray-50 rounded-xl p-3 transition font-minecraft" onClick={() => setIsMenuOpen(false)}>
+                      <img src="/assets/menu_setting.png" alt="Setting" className="w-8 h-8" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/assets/button.png' }} />
+                      <span className="text-xs text-gray-800">Setting</span>
+                    </button>
+                    {/* Logout */}
+                    <button className="flex flex-col items-center justify-center gap-2 hover:bg-gray-50 rounded-xl p-3 transition font-minecraft text-red-600" onClick={handleLogout}>
+                      <img src="/assets/menu_logout.png" alt="Logout" className="w-8 h-8" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/assets/button.png' }} />
+                      <span className="text-xs">Logout</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

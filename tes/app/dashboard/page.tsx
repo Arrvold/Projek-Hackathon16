@@ -61,7 +61,6 @@ export default function Dashboard() {
         stamina={stamina}
         coins={coins}
         userRole={userRole}
-        onRoleChange={() => setShowRegisterModal(true)}
       />
       
       <main className="px-6 py-8">

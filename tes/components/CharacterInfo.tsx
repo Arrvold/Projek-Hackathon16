@@ -102,16 +102,16 @@ export default function CharacterInfo({ userRole, onRoleChange }: CharacterInfoP
                   isCurrentRole 
                     ? 'border-orange-500 bg-orange-50' 
                     : 'border-gray-200 bg-white'
-                }`}
+                } cursor-pointer`}
+                onClick={() => handleRoleChange(role.id)}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    {/* Badge - Clickable untuk ganti role */}
+                    {/* Badge */}
                     <div 
-                      className={`w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 cursor-pointer hover:scale-110 transition-transform ${
-                        isCurrentRole ? 'ring-2 ring-orange-500' : ''
+                      className={`w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 hover:scale-110 transition-transform ${
+                        isCurrentRole ? '' : ''
                       }`}
-                      onClick={() => handleRoleChange(role.id)}
                       title={`Ganti ke role ${role.name}`}
                     >
                       <img 
